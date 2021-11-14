@@ -32,3 +32,5 @@ You can use the tensorboard to visualize the training curve. History training cu
 For more details of Hyperparameter Setting, please check 'main.py'
 ### Reference
 TD3: Fujimoto S , Hoof H V , Meger D . Addressing Function Approximation Error in Actor-Critic Methods[J]. 2018.
+
+### Other RL algorithms by Pytorch can be found [here](https://github.com/XinJingHao/RL-Algorithms-by-Pytorch).
