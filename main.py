@@ -64,7 +64,7 @@ def main():
     if opt.write:
         timenow = str(datetime.now())[0:-10]
         timenow = ' ' + timenow[0:13] + '_' + timenow[-2::]
-        writepath = 'runs/1e-4_{}'.format(BrifEnvName[EnvIdex]) + timenow
+        writepath = 'runs/{}'.format(BrifEnvName[EnvIdex]) + timenow
         if os.path.exists(writepath): shutil.rmtree(writepath)
         writer = SummaryWriter(log_dir=writepath)
 
