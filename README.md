@@ -5,6 +5,9 @@ A clean and robust Pytorch implementation of TD3 on continuous action space. Her
 All the experiments are trained with same hyperparameters, and bellow are some short recordings:
 <img src="https://github.com/XinJingHao/TD3-Pytorch/blob/main/images/Render_BWHV3.gif" width=400>
 
+
+**Other RL algorithms by Pytorch can be found [here](https://github.com/XinJingHao/RL-Algorithms-by-Pytorch).**
+
 ## Dependencies
 gym==0.18.3  
 box2d==2.3.10  
@@ -34,5 +37,3 @@ You can use the tensorboard to visualize the training curve. History training cu
 For more details of Hyperparameter Setting, please check 'main.py'
 ### Reference
 TD3: Fujimoto S , Hoof H V , Meger D . Addressing Function Approximation Error in Actor-Critic Methods[J]. 2018.
-
-### Other RL algorithms by Pytorch can be found [here](https://github.com/XinJingHao/RL-Algorithms-by-Pytorch).
