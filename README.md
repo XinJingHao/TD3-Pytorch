@@ -1,10 +1,9 @@
 # TD3-Pytorch
-A clean and robust Pytorch implementation of TD3 on continuous action space. Here is the result:  
-<img src="https://github.com/XinJingHao/TD3-Pytorch/blob/main/images/TD3results.png" width=700>
 
-All the experiments are trained with same hyperparameters, and bellow are some short recordings:
-<img src="https://github.com/XinJingHao/TD3-Pytorch/blob/main/images/Render_BWHV3.gif" width=400>
+**A clean and robust Pytorch implementation of TD3 on continuous action space.**
 
+<img src="https://github.com/XinJingHao/TD3-Pytorch/blob/main/images/Render_BWHV3.gif" width="75%" height="auto">  | <img src="https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/render_gif/lldcV2.gif" width="75%" height="auto">
+:-----------------------:|:-----------------------:|
 
 **Other RL algorithms by Pytorch can be found [here](https://github.com/XinJingHao/RL-Algorithms-by-Pytorch).**
 
@@ -59,3 +58,7 @@ For more details of Hyperparameter Setting, please check 'main.py'
 
 ### Reference
 TD3: Fujimoto S , Hoof H V , Meger D . Addressing Function Approximation Error in Actor-Critic Methods[J]. 2018.
+
+## Training Curves
+<img src="https://github.com/XinJingHao/TD3-Pytorch/blob/main/images/TD3results.png" width=700>
+All the experiments are trained with same hyperparameters (see main.py). 
