@@ -1,7 +1,8 @@
-from utils import str2bool, evaluate_policy, Action_adapter, Action_adapter_reverse, Reward_adapter
+from utils import str2bool,evaluate_policy, Reward_adapter
 from datetime import datetime
-from SAC import SAC_countinuous
+from TD3 import TD3_agent
 import gymnasium as gym
+import numpy as np
 import os, shutil
 import argparse
 import torch
@@ -14,21 +15,22 @@ parser.add_argument('--EnvIdex', type=int, default=0, help='PV1, Lch_Cv2, Humanv
 parser.add_argument('--write', type=str2bool, default=False, help='Use SummaryWriter to record the training')
 parser.add_argument('--render', type=str2bool, default=False, help='Render or Not')
 parser.add_argument('--Loadmodel', type=str2bool, default=False, help='Load pretrained model or Not')
-parser.add_argument('--ModelIdex', type=int, default=100, help='which model to load')
+parser.add_argument('--ModelIdex', type=int, default=30, help='which model to load')
 
 parser.add_argument('--seed', type=int, default=0, help='random seed')
+parser.add_argument('--update_every', type=int, default=50, help='training frequency')
 parser.add_argument('--Max_train_steps', type=int, default=int(5e6), help='Max training steps')
-parser.add_argument('--save_interval', type=int, default=int(100e3), help='Model saving interval, in steps.')
-parser.add_argument('--eval_interval', type=int, default=int(2.5e3), help='Model evaluating interval, in steps.')
-parser.add_argument('--update_every', type=int, default=50, help='Training Fraquency, in stpes')
+parser.add_argument('--save_interval', type=int, default=int(1e5), help='Model saving interval, in steps.')
+parser.add_argument('--eval_interval', type=int, default=int(2e3), help='Model evaluating interval, in steps.')
 
+parser.add_argument('--delay_freq', type=int, default=1, help='Delayed frequency for Actor and Target Net')
 parser.add_argument('--gamma', type=float, default=0.99, help='Discounted Factor')
 parser.add_argument('--net_width', type=int, default=256, help='Hidden net width, s_dim-400-300-a_dim')
-parser.add_argument('--a_lr', type=float, default=3e-4, help='Learning rate of actor')
-parser.add_argument('--c_lr', type=float, default=3e-4, help='Learning rate of critic')
+parser.add_argument('--a_lr', type=float, default=1e-4, help='Learning rate of actor')
+parser.add_argument('--c_lr', type=float, default=1e-4, help='Learning rate of critic')
 parser.add_argument('--batch_size', type=int, default=256, help='batch_size of training')
-parser.add_argument('--alpha', type=float, default=0.12, help='Entropy coefficient')
-parser.add_argument('--adaptive_alpha', type=str2bool, default=True, help='Use adaptive_alpha or Not')
+parser.add_argument('--explore_noise', type=float, default=0.15, help='exploring noise when interacting')
+parser.add_argument('--explore_noise_decay', type=float, default=0.998, help='Decay rate of explore noise')
 opt = parser.parse_args()
 opt.dvc = torch.device(opt.dvc) # from str to torch.device
 print(opt)
@@ -50,6 +52,7 @@ def main():
 
     # Seed Everything
     env_seed = opt.seed
+    np.random.seed(opt.seed)
     torch.manual_seed(opt.seed)
     torch.cuda.manual_seed(opt.seed)
     torch.backends.cudnn.deterministic = True
@@ -68,7 +71,7 @@ def main():
 
     # Build DRL model
     if not os.path.exists('model'): os.mkdir('model')
-    agent = SAC_countinuous(**vars(opt)) # var: transfer argparse to dictionary
+    agent = TD3_agent(**vars(opt)) # var: transfer argparse to dictionary
     if opt.Loadmodel: agent.load(BrifEnvName[opt.EnvIdex], opt.ModelIdex)
 
     if opt.render:
@@ -84,13 +87,9 @@ def main():
 
             '''Interact & trian'''
             while not done:
-                if total_steps < (5*opt.max_e_steps):
-                    act = env.action_space.sample()  # act∈[-max,max]
-                    a = Action_adapter_reverse(act, opt.max_action)  # a∈[-1,1]
-                else:
-                    a = agent.select_action(s, deterministic=False)  # a∈[-1,1]
-                    act = Action_adapter(a, opt.max_action)  # act∈[-max,max]
-                s_next, r, dw, tr, info = env.step(act)  # dw: dead&win; tr: truncated
+                if total_steps < (10*opt.max_e_steps): a = env.action_space.sample() # warm up
+                else: a = agent.select_action(s, deterministic=False)
+                s_next, r, dw, tr, info = env.step(a) # dw: dead&win; tr: truncated
                 r = Reward_adapter(r, opt.EnvIdex)
                 done = (dw or tr)
 
@@ -98,7 +97,7 @@ def main():
                 s = s_next
                 total_steps += 1
 
-                '''train if it's time'''
+                '''train if its time'''
                 # train 50 times every 50 steps rather than 1 training per step. Better!
                 if (total_steps >= 2*opt.max_e_steps) and (total_steps % opt.update_every == 0):
                     for j in range(opt.update_every):
@@ -106,6 +105,7 @@ def main():
 
                 '''record & log'''
                 if total_steps % opt.eval_interval == 0:
+                    agent.explore_noise *= opt.explore_noise_decay
                     ep_r = evaluate_policy(eval_env, agent, turns=3)
                     if opt.write: writer.add_scalar('ep_r', ep_r, global_step=total_steps)
                     print(f'EnvName:{BrifEnvName[opt.EnvIdex]}, Steps: {int(total_steps/1000)}k, Episode Reward:{ep_r}')
@@ -119,3 +119,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+
