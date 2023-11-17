@@ -2,8 +2,11 @@
 
 **A clean and robust Pytorch implementation of TD3 on continuous action space.**
 
-<img src="https://github.com/XinJingHao/TD3-Pytorch/blob/main/images/Render_BWHV3.gif" width="80%" height="auto">  | <img src="https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/render_gif/lldcV2.gif" width="80%" height="auto">
+BipedalWalkerHardcore | LunarLanderContinuous
 :-----------------------:|:-----------------------:|
+<img src="https://github.com/XinJingHao/TD3-Pytorch/blob/main/images/Render_BWHV3.gif" width="80%" height="auto">  | <img src="https://github.com/XinJingHao/PPO-Continuous-Pytorch/blob/main/render_gif/lldcV2.gif" width="80%" height="auto">
+<img src="https://github.com/XinJingHao/TD3-Pytorch/blob/main/images/bwh_td3.png" width="80%" height="auto">  | <img src="https://github.com/XinJingHao/TD3-Pytorch/blob/main/images/lldc_td3.png" width="80%" height="auto">
+
 
 **Other RL algorithms by Pytorch can be found [here](https://github.com/XinJingHao/RL-Algorithms-by-Pytorch).**
 
