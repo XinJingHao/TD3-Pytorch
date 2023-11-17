@@ -14,6 +14,7 @@ box2d-py==2.3.5
 numpy==1.26.1
 pytorch==2.1.0
 tensorboard==2.15.1
+packaging==23.2
 
 python==3.11.5
 ```
